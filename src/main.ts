@@ -130,6 +130,17 @@ window.addEventListener('keydown', firstGesture);
 window.addEventListener('touchstart', firstGesture);
 playMusic(); // optimistic attempt (works if the browser allows it)
 
+// "Cha-ching" click sound. Reset to the start each time so rapid clicks
+// always re-trigger it, and swallow the autoplay rejection browsers throw
+// before the first gesture.
+const clickSfx = new Audio(import.meta.env.BASE_URL + 'cha-ching.mp3');
+clickSfx.volume = 0.6;
+clickSfx.preload = 'auto';
+function playClick(): void {
+  clickSfx.currentTime = 0;
+  clickSfx.play().catch(() => { /* blocked until first gesture */ });
+}
+
 const hud = el(
   'div',
   { class: 'hud' },
@@ -212,6 +223,7 @@ function buildProduct(p: Product): HTMLElement {
   glyph.style.animationDelay = (Math.random() * -4).toFixed(2) + 's';
 
   btn.addEventListener('click', () => {
+    playClick();
     btn.classList.remove('pop');
     void btn.offsetWidth;
     btn.classList.add('pop');
