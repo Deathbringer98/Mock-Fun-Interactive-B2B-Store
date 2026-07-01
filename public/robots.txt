@@ -1,0 +1,7 @@
+# robots.txt for SOUNDS FUN™ — B2B Concept Store
+# Allow all well-behaved crawlers full access.
+User-agent: *
+Allow: /
+
+# Point crawlers at the sitemap so pages get discovered and indexed.
+Sitemap: https://astupidwebsite.online/sitemap.xml
