@@ -92,11 +92,49 @@ cartEl.addEventListener('click', () => {
   toast(`${cart.length} item(s) · ${money(total)} — checkout is “coming Q5”.`);
 });
 
+// Background music — loops forever, low volume. Browsers block autoplay
+// with sound until the user interacts, so we try to play immediately and
+// otherwise start on the first pointer/key/touch. A toggle lets you mute.
+const music = new Audio(import.meta.env.BASE_URL + 'elevator-music.mp3');
+music.loop = true;
+music.volume = 0.35;
+music.preload = 'auto';
+
+let musicOn = false;
+const musicBtn = el('div', { class: 'music', title: 'Toggle elevator music' }, '🔈');
+
+function reflectMusic(): void {
+  musicBtn.textContent = musicOn ? '🔊' : '🔈';
+  musicBtn.classList.toggle('on', musicOn);
+}
+
+function playMusic(): void {
+  music.play().then(() => { musicOn = true; reflectMusic(); }).catch(() => { /* still blocked */ });
+}
+
+musicBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (musicOn) { music.pause(); musicOn = false; reflectMusic(); }
+  else { playMusic(); }
+});
+
+// Kick playback off on the first interaction if autoplay was blocked.
+function firstGesture(): void {
+  if (!musicOn) playMusic();
+  window.removeEventListener('pointerdown', firstGesture);
+  window.removeEventListener('keydown', firstGesture);
+  window.removeEventListener('touchstart', firstGesture);
+}
+window.addEventListener('pointerdown', firstGesture);
+window.addEventListener('keydown', firstGesture);
+window.addEventListener('touchstart', firstGesture);
+playMusic(); // optimistic attempt (works if the browser allows it)
+
 const hud = el(
   'div',
   { class: 'hud' },
   el('div', { class: 'brand' }, ...[textB('SOUNDS'), sp(' '), textNeon('FUN™'), sp('  '), textDim('a b2b concept store')]),
-  cartEl,
+  el('div', { class: 'hud-right' }, musicBtn, cartEl),
 );
 
 // The stage / room
