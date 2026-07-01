@@ -37,6 +37,7 @@ function money(n: number): string {
 }
 
 function addToCart(p: Product): void {
+  playClick();
   cart.push(p);
   cartCountEl.textContent = String(cart.length);
   cartEl.classList.remove('bump');
@@ -223,7 +224,6 @@ function buildProduct(p: Product): HTMLElement {
   glyph.style.animationDelay = (Math.random() * -4).toFixed(2) + 's';
 
   btn.addEventListener('click', () => {
-    playClick();
     btn.classList.remove('pop');
     void btn.offsetWidth;
     btn.classList.add('pop');
